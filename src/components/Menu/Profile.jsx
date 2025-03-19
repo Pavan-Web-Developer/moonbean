@@ -1,35 +1,32 @@
-import {useAuth0} from '@auth0/auth0-react'
 import React from 'react'
-
+import { useZustand } from '../../store/useZustand'
 
 export const Profile = () => {
-  const {isAuthenticated, loginWithRedirect, logout, user} = useAuth0()
+  const { 
+    walletAddress, 
+    isWalletConnected, 
+    setIsWalletConnected, 
+    setWalletAddress 
+  } = useZustand()
 
-  const logoutWithRedirect = () => {
-    logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
-    })
+  const disconnectWallet = () => {
+    setWalletAddress('')
+    setIsWalletConnected(false)
   }
 
   return (
     <div className='flex items-center justify-center h-full gap-2 p-2 text-white'>
-      {user?.name}
-      {isAuthenticated ?
-        <button
-          className='pl-2 pr-2 border-2 rounded'
-          onClick={logoutWithRedirect}
-        >
-          Log out
-        </button> :
-        <button
-          className='pl-2 pr-2 border-2 rounded'
-          onClick={loginWithRedirect}
-        >
-          Log in
-        </button>
-      }
+      {isWalletConnected && (
+        <>
+          {`${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
+          <button
+            className='pl-2 pr-2 border-2 rounded'
+            onClick={disconnectWallet}
+          >
+            Disconnect
+          </button>
+        </>
+      )}
     </div>
   )
 }

@@ -5,9 +5,6 @@ import {getUserData} from '../../utils/mongo.db'
 import {AddLink} from './AddLink'
 import {MenuItem} from './MenuItem'
 import {Profile} from './Profile'
-// import { USER_NAME } from '../../utils/constants'
-import {useAuth0} from '@auth0/auth0-react'
-
 
 export const Menu = () => {
   const {
@@ -15,18 +12,18 @@ export const Menu = () => {
     setMenuArr,
     setSelMenuIndex,
     setIsLoading,
+    walletAddress,
+    isWalletConnected
   } = useZustand()
-  const {isAuthenticated, user} = useAuth0()
 
   useEffect(() => {
     (async () => {
-      if (!user?.name) {
+      if (!walletAddress) {
         return
       }
       setIsLoading(true)
-      const getDataRes = await getUserData(user.name)
-      // const getDataRes = await getUserData(USER_NAME)
-      customDebug().log('Menu#useEffect[user]: getDataRes: ', getDataRes)
+      const getDataRes = await getUserData(walletAddress)
+      customDebug().log('Menu#useEffect[walletAddress]: getDataRes: ', getDataRes)
 
       if (Array.isArray(getDataRes) && getDataRes.length) {
         setMenuArr(getDataRes)
@@ -35,7 +32,7 @@ export const Menu = () => {
 
       setIsLoading(false)
     })()
-  }, [user])
+  }, [walletAddress])
 
   return (
     <div className='flex items-center justify-between w-screen h-12 bg-black border-0 border-b-2 border-white'>
@@ -47,10 +44,7 @@ export const Menu = () => {
             menu={menu}
           />,
         )}
-        {
-          isAuthenticated &&
-          <AddLink />
-        }
+        {isWalletConnected && <AddLink />}
       </div>
       <Profile />
     </div>

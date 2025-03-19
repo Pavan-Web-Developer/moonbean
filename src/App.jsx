@@ -1,4 +1,3 @@
-import {useAuth0} from '@auth0/auth0-react'
 import activityDetector from 'activity-detector'
 import React, {useEffect} from 'react'
 import {BillboardPage} from './components/BillboardPage'
@@ -12,14 +11,8 @@ import {Loading} from './components/Utils/Loading'
 import {useZustand} from './store/useZustand'
 import {customDebug} from './utils/custom.debug'
 
-
 const App = () => {
-  const {setIsLoading, setIsSeeingApp} = useZustand()
-  const {isLoading} = useAuth0()
-
-  useEffect(() => {
-    setIsLoading(isLoading)
-  }, [isLoading, setIsLoading])
+  const {setIsSeeingApp, isWalletConnected} = useZustand()
 
   useEffect(() => {
     newActivityDetector.on('idle', () => {
@@ -32,15 +25,19 @@ const App = () => {
     })
   }, [])
 
+  if (!isWalletConnected) {
+    return null;
+  }
+
   return (
     <div className='relative flex flex-col w-screen h-screen'>
       <Menu />
       <div className='relative w-full h-[calc(100vh-3rem)]'>
         <BillboardPage />
-        <MBoard />
+        {/* <MBoard /> */}
         <Home />
       </div>
-      <Plausible />
+      {/* <Plausible /> */}
       <Confirm />
       <Alert />
       <Loading />

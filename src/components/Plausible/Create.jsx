@@ -1,4 +1,3 @@
-import {useAuth0} from '@auth0/auth0-react'
 import React, {useRef} from 'react'
 import {useZustand} from '../../store/useZustand'
 import {urlToDomain} from '../../utils/common'
@@ -6,7 +5,6 @@ import {USE_PLAUSIBLE} from '../../utils/constants'
 import {customDebug} from '../../utils/custom.debug'
 import {saveData} from '../../utils/mongo.db'
 import {createSite} from '../../utils/plausible'
-
 
 export const Create = ({domain}) => {
   const {
@@ -17,8 +15,9 @@ export const Create = ({domain}) => {
     setSelMenuIndex,
     onConfirm,
     setIsLoading,
+    walletAddress,
+    isWalletConnected
   } = useZustand()
-  const {user} = useAuth0()
   const inputRef = useRef(null)
 
   return (
@@ -34,8 +33,8 @@ export const Create = ({domain}) => {
         onClick={() => onConfirm(async () => {
           setIsLoading(true)
 
-          if (!user?.name) {
-            setAlertMsg('Username not correct.')
+          if (!isWalletConnected || !walletAddress) {
+            setAlertMsg('Wallet not connected.')
             setIsLoading(false)
             return
           }
@@ -66,8 +65,7 @@ export const Create = ({domain}) => {
             siteData = {domain: urlDomain}
           }
 
-          siteData.username = user.name
-          // siteData.username = USER_NAME
+          siteData.username = walletAddress
           const saveDataRes = await saveData(siteData)
           customDebug().log('Create#onClick: saveDataRes: ', saveDataRes)
           const insertedId = saveDataRes?.data?.insertedId
