@@ -1,13 +1,16 @@
-import {Auth0Provider} from '@auth0/auth0-react'
 import {createBrowserHistory} from 'history'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
+import {useZustand} from './store/useZustand'
 import {customDebug} from './utils/custom.debug'
-
+import {Auth0Provider} from '@auth0/auth0-react'
+// import { testWalletConnection } from './utils/wallet.test'
 
 const browserHistory = createBrowserHistory()
+
+
 
 const onRedirectCallback = (appState) => {
   customDebug().log('index#onRedirectCallback: appState: ', appState)
@@ -33,8 +36,17 @@ const providerConfig = {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Auth0Provider {...providerConfig}>
-      <App />,
-    </Auth0Provider>
+    {/* <Auth0Provider {...providerConfig}>
+      <App />
+    </Auth0Provider> */}
+      <App />
+
   </React.StrictMode>,
 )
+
+// ReactDOM.createRoot(document.getElementById('root')).render(<App />)
+
+
+
+
+

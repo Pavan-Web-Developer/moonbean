@@ -16,15 +16,16 @@ export const Menu = () => {
     setSelMenuIndex,
     setIsLoading,
   } = useZustand()
-  const {isAuthenticated, user} = useAuth0()
-
+  const {isAuthenticated } = useAuth0()
+  const {isWalletConnected, userData} = useZustand()
+  console.log("userData",userData)
   useEffect(() => {
     (async () => {
-      if (!user?.name) {
+      if (!userData?.username) {
         return
       }
       setIsLoading(true)
-      const getDataRes = await getUserData(user.name)
+      const getDataRes = await getUserData(userData.username)
       // const getDataRes = await getUserData(USER_NAME)
       customDebug().log('Menu#useEffect[user]: getDataRes: ', getDataRes)
 
@@ -35,7 +36,7 @@ export const Menu = () => {
 
       setIsLoading(false)
     })()
-  }, [user])
+  }, [userData])
 
   return (
     <div className='flex items-center justify-between w-screen h-12 bg-black border-0 border-b-2 border-white'>
@@ -48,7 +49,7 @@ export const Menu = () => {
           />,
         )}
         {
-          isAuthenticated &&
+          isAuthenticated ||isWalletConnected &&
           <AddLink />
         }
       </div>

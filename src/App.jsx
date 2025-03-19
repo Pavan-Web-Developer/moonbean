@@ -15,11 +15,11 @@ import {customDebug} from './utils/custom.debug'
 
 const App = () => {
   const {setIsLoading, setIsSeeingApp} = useZustand()
-  const {isLoading} = useAuth0()
+  // const {isLoading} = useAuth0()
 
-  useEffect(() => {
-    setIsLoading(isLoading)
-  }, [isLoading, setIsLoading])
+  // useEffect(() => {
+  //   setIsLoading(isLoading)
+  // }, [isLoading, setIsLoading])
 
   useEffect(() => {
     newActivityDetector.on('idle', () => {

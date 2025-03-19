@@ -7,10 +7,11 @@ const validateRegisterInput = (data) => {
 
   data.username = !isEmpty(data.username) ? data.username : ''
   data.password = !isEmpty(data.password) ? data.password : ''
+  data.walletAddress = !isEmpty(data.walletAddress) ? data.walletAddress : ''
 
   if (!validator.isLength(data.username, {
     min: 2,
-    max: 30,
+    max: 50,
   })) {
     errors.username = 'Username should be between 2 and 30 characters'
   }
@@ -26,6 +27,13 @@ const validateRegisterInput = (data) => {
   })) {
     errors.password = 'Password should be at least 6 characters'
   }
+  if (validator.isEmpty(data.walletAddress)) {
+    errors.walletAddress = 'Wallet address is required'
+  }
+  if (!data.walletAddress.startsWith('0x')) {
+    errors.walletAddress = 'Invalid wallet address'
+  }
+
   return {
     errors,
     isValid: isEmpty(errors),

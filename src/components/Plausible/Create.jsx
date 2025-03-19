@@ -19,6 +19,8 @@ export const Create = ({domain}) => {
     setIsLoading,
   } = useZustand()
   const {user} = useAuth0()
+   const {isWalletConnected, walletAddress, setIsWalletConnected, setWalletAddress, userData, setUser, setUserData} = useZustand()
+  console.log("user==>",userData)
   const inputRef = useRef(null)
 
   return (
@@ -34,7 +36,7 @@ export const Create = ({domain}) => {
         onClick={() => onConfirm(async () => {
           setIsLoading(true)
 
-          if (!user?.name) {
+          if (!userData?.username) {
             setAlertMsg('Username not correct.')
             setIsLoading(false)
             return
@@ -66,7 +68,7 @@ export const Create = ({domain}) => {
             siteData = {domain: urlDomain}
           }
 
-          siteData.username = user.name
+          siteData.username = userData.username
           // siteData.username = USER_NAME
           const saveDataRes = await saveData(siteData)
           customDebug().log('Create#onClick: saveDataRes: ', saveDataRes)
@@ -77,6 +79,7 @@ export const Create = ({domain}) => {
             setIsLoading(false)
             return
           }
+          console.log("==>siteData",siteData)
 
           siteData._id = insertedId
           setSelMenuIndex(menuArr.length)

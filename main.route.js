@@ -1,5 +1,5 @@
 const express = require('express')
-const {MongoClient, ObjectId, ServerApiVersion} = require('mongodb')
+const { MongoClient, ObjectId, ServerApiVersion } = require('mongodb')
 
 
 const URL = 'mongodb+srv://Prom:sDMaD4cDMuuIRCLt@cluster0.mad4eco.mongodb.net/?retryWrites=true&w=majority'
@@ -38,7 +38,7 @@ client.connect((connErr) => {
 
   // This section will help you get a single product by id
   mainRoute.route('/:id').get((req, res) => {
-    const myQuery = {_id: objectId(req.params.id)}
+    const myQuery = { _id: objectId(req.params.id) }
     mainCollection.findOne(myQuery, (err, result) => {
       if (err) {
         throw err
@@ -59,7 +59,7 @@ client.connect((connErr) => {
 
   // This section will help you update a product by id
   mainRoute.route('/update/:id').post((req, response) => {
-    const myQuery = {_id: objectId(req.params.id)}
+    const myQuery = { _id: objectId(req.params.id) }
     const newValues = {
       $set: req.body,
     }
@@ -73,7 +73,7 @@ client.connect((connErr) => {
 
   // This section will help you delete a product
   mainRoute.route('/remove/:id').post((req, response) => {
-    const myQuery = {_id: objectId(req.params.id)}
+    const myQuery = { _id: objectId(req.params.id) }
     mainCollection.deleteOne(myQuery, (err, obj) => {
       if (err) {
         throw err
@@ -84,7 +84,7 @@ client.connect((connErr) => {
 
   // This section will help you get product list by username
   mainRoute.route('/getuserdata/:username').get((req, res) => {
-    mainCollection.find({username: req.params.username}).toArray((err, result) => {
+    mainCollection.find({ username: req.params.username }).toArray((err, result) => {
       if (err) {
         throw err
       }
