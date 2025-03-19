@@ -10,14 +10,21 @@ export const Home = () => {
 console.log("isWalletConnected",menuArr,isWalletConnected)
 
   return (
-   ( !isWalletConnected
+   ( !isWalletConnected||menuArr.length === 0 
     )
-  ) && (
+   && (
       <div className='absolute z-10 flex flex-col items-center justify-center w-full h-full text-center text-white bg-black text-8xl'>
         {
-           !isWalletConnected ?
-            <div>Please log in to analyze websites</div> :
+           !isWalletConnected ?<>
            
-              <div>Click the &quot;+&quot; to add a site</div>}</div>
-    )
+            <div>Please log in to analyze websites</div> 
+           </>
+            :
+           <>
+           {menuArr&& menuArr.length == 0 ?
+            <div>Click the &quot;+&quot; to add a site</div>:<> </>}
+           </>}
+              
+              </div>
+    ))
 }
