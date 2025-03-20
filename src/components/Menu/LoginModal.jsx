@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useZustand } from '../../store/useZustand'
 
-export const RegisterModal = ({ onClose }) => {
+export const LoginModal = ({ onClose, loginUser }) => {
+      const {isWalletConnected, walletAddress, setIsWalletConnected, setWalletAddress, userData, user, setUser, setUserData} = useZustand()
+     
   const [formData, setFormData] = useState({
     username: '',
     password: '',
     walletAddress: ''
   })
-  const [isWalletEditable, setIsWalletEditable] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const connectWallet = async () => {
@@ -56,53 +58,63 @@ export const RegisterModal = ({ onClose }) => {
     }))
   }
 
-  const handleRegister = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    try {
-      const response = await fetch('http://localhost:4000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+    loginUser(formData)
+    // try {
+    //   const response = await fetch('http://localhost:4000/api/auth/login', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(formData),
+    //   })
 
-      const data = await response.json()
+    //   const data = await response.json()
       
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed')
-      }
+    //   if (!response.ok) {
+    //     throw new Error(data.message || 'Login failed')
+    //   }
 
-      toast.success('🎉 Registration successful!', {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
+    //   toast.success('🎉 Login successful!', {
+    //     position: "top-center",
+    //     autoClose: 3000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "dark",
+    //   });
+    //   // Set both user and userData, and store in localStorage
+    //   setUser(data.user)
+    //   setUserData(data)
+    //   setWalletAddress(accounts[0])
+    //   setIsWalletConnected(true)
       
-      setTimeout(() => {
-        onClose()
-      }, 3000)
-    } catch (err) {
-      console.error('Registration error:', err)
-      toast.error(err.message)
-    }
+    //   // Store in localStorage
+    //   localStorage.setItem('userData', JSON.stringify(data))
+    //   localStorage.setItem('walletAddress', accounts[0])
+      
+    //   setTimeout(() => {
+    //     onClose()
+    //   }, 500)
+    // } catch (err) {
+    //   console.error('Login error:', err)
+    //   toast.error(err.message)
+    // }
   }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999]">
-  
-      <div className="bg-gray-800 p-6 rounded-lg w-96">
-        <h2 className="text-xl text-white mb-4">Register</h2>
-        <form onSubmit={handleRegister} className="flex flex-col gap-4">
+    
+      <div className="bg-gray-800 p-6 rounded-lg w-96 shadow-xl">
+        <h2 className="text-xl text-white mb-4 font-semibold">Login</h2>
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Username"
-            className="p-2 rounded bg-gray-700 text-white"
+            className="p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none"
             value={formData.username}
             onChange={(e) => setFormData(prev => ({...prev, username: e.target.value}))}
           />
@@ -110,7 +122,7 @@ export const RegisterModal = ({ onClose }) => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="p-2 rounded bg-gray-700 text-white w-full"
+              className="p-2 rounded bg-gray-700 text-white w-full border border-gray-600 focus:border-blue-500 focus:outline-none"
               value={formData.password}
               onChange={(e) => setFormData(prev => ({...prev, password: e.target.value}))}
             />
@@ -135,7 +147,7 @@ export const RegisterModal = ({ onClose }) => {
             <input
               type="text"
               placeholder="Wallet Address"
-              className="p-2 rounded bg-gray-700 text-white flex-1"
+              className="p-2 rounded bg-gray-700 text-white flex-1 border border-gray-600"
               value={formData.walletAddress}
               readOnly
             />
@@ -174,7 +186,7 @@ export const RegisterModal = ({ onClose }) => {
               }`}
               disabled={!formData.username || !formData.password || !formData.walletAddress}
             >
-              Register
+              Login
             </button>
           </div>
         </form>
