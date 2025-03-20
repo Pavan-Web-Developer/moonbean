@@ -17,64 +17,97 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const App = () => {
   const {setIsLoading, setIsSeeingApp, isWalletConnected, setIsWalletConnected} = useZustand()
-  // const [isWalletConnected, setIsWalletConnected] = useState(false)
+
+  // Modify the handleDisconnection function
+  const handleDisconnection = () => {
+    console.log('Handling disconnection...');
+    setIsWalletConnected(false);
+    localStorage.clear();
+    if(isWalletConnected) {
+      toast.error('Wallet disconnected', {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
+  // MetaMask event listeners
+  useEffect(() => {
+    if (window.ethereum) {
+      // Handle accounts change (including disconnection)
+      const handleAccountsChanged = (accounts) => {
+        console.log('Accounts changed:', accounts);
+        if (accounts.length === 0) {
+          console.log('No accounts found - wallet disconnected');
+          handleDisconnection();
+        }
+      };
+
+      // Handle disconnect event
+      const handleDisconnectEvent = (error) => {
+        console.error('MetaMask disconnect event:', error);
+        handleDisconnection();
+      };
+
+      // Handle chain change
+      const handleChainChanged = () => {
+        window.location.reload();
+      };
+
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('disconnect', handleDisconnectEvent);
+      window.ethereum.on('chainChanged', handleChainChanged);
+
+      // Cleanup listeners
+      return () => {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('disconnect', handleDisconnectEvent);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      };
+    }
+  }, [isWalletConnected]);
 
   // Wallet connection check
   useEffect(() => {
     const checkWalletConnection = async () => {
+      if (!window.ethereum) return; // Early return if no wallet
+
       try {
         const accounts = await window.ethereum?.request({ method: 'eth_accounts' });
         const isConnected = accounts && accounts.length > 0;
         console.log('isConnected:', isConnected);
         if (!isConnected) {
-          setIsWalletConnected(false);
-          localStorage.clear();
-          toast.error('Wallet disconnected', {
-            position: "top-center",
-            autoClose: 100,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          window.location.href = '/';
+          handleDisconnection();
         } else {
-          // setIsWalletConnected(true);
-         if(isWalletConnected){ 
-          toast.success(`Wallet Connection checked: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`, {
-            position: "top-center",
-            autoClose: 200,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });}
+          if(isWalletConnected){ 
+            toast.success(`Wallet Connection checked: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`, {
+              position: "top-center",
+              autoClose: 600,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+              theme: "dark",
+            });
+          }
         }
       } catch (error) {
         console.error('Wallet connection check failed:', error);
-        setIsWalletConnected(false);
-        localStorage.clear();
-        toast.error('Wallet connection failed', {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        handleDisconnection();
       }
     };
 
     checkWalletConnection();
     const intervalId = setInterval(checkWalletConnection, 5000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [isWalletConnected]);
 
   // Activity detector effect
   useEffect(() => {

@@ -16,6 +16,7 @@ export const LoginModal = ({ onClose, loginUser }) => {
   const connectWallet = async () => {
     try {
       if (!window.ethereum) {
+        setTimeout(() => window.location.reload(), 2000)
         toast.error(
           <div>
             MetaMask not found! 
@@ -24,6 +25,7 @@ export const LoginModal = ({ onClose, loginUser }) => {
               target="_blank" 
               rel="noopener noreferrer"
               className="text-blue-400 hover:text-blue-500 ml-2"
+              
             >
               Download here
             </a>
